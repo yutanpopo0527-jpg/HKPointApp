@@ -80,7 +80,10 @@
         <span class="text-sm font-semibold text-indigo-800">会員情報</span>
         <span class="text-xs bg-indigo-200 text-indigo-800 px-2 py-1 rounded-full font-bold">認証済</span>
       </div>
-      <p class="text-sm text-slate-600 mb-2">ID: <span id="displayUserId" class="font-bold text-slate-900 font-mono tracking-wider">---</span></p>
+      <p class="text-sm text-slate-600 mb-1">ID: <span id="displayUserId" class="font-bold text-slate-900 font-mono tracking-wider">---</span></p>
+      <!-- 出席簿と連動して名前を表示するエリア -->
+      <p class="text-lg font-bold text-slate-800 mb-3"><span id="displayUserName">---</span> <span class="text-sm font-normal text-slate-500">さん</span></p>
+      
       <div class="bg-white p-4 rounded-lg shadow-sm text-center border border-indigo-100">
         <p class="text-xs text-slate-500 font-bold mb-1">現在のポイント残高</p>
         <p class="text-5xl font-extrabold text-indigo-600 tracking-tighter"><span id="displayPointBalance">0</span> <span class="text-lg font-bold text-slate-400">pt</span></p>
@@ -90,40 +93,76 @@
     <!-- ==========================================
          3. ポイント操作セクション (初期非表示・無効)
          ========================================== -->
-    <div id="operationSection" class="opacity-50 pointer-events-none transition-opacity duration-300 space-y-4 pt-2">
+    <div id="operationSection" class="opacity-50 pointer-events-none transition-opacity duration-300 space-y-6 pt-4 border-t border-slate-200">
       
       <!-- ポイント付与 (緑系) -->
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input 
-          type="number" 
-          id="addPointInput" 
-          class="flex-1 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-lg text-center sm:text-left" 
-          placeholder="付与数 (例: 100)" 
-          min="1" 
-        >
-        <button 
-          id="addPointBtn" 
-          class="bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-600 active:bg-emerald-700 transition-colors whitespace-nowrap"
-        >
-          ➕ 付与する
-        </button>
+      <div>
+        <h3 class="text-sm font-bold text-slate-700 mb-2">➕ ポイントを付与する</h3>
+        <!-- 任意のポイント数を入力 -->
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input 
+            type="number" 
+            id="addPointInput" 
+            class="flex-1 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 outline-none text-lg text-center sm:text-left" 
+            placeholder="任意の数を入力 (例: 15)" 
+            min="1" 
+          >
+          <button 
+            id="addPointBtn" 
+            class="bg-emerald-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-emerald-600 active:bg-emerald-700 transition-colors whitespace-nowrap"
+          >
+            付与する
+          </button>
+        </div>
+        
+        <!-- ワンクリック付与ボタン -->
+        <div class="grid grid-cols-5 gap-2 mt-3">
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="10">+10</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="20">+20</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="30">+30</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="40">+40</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="50">+50</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="60">+60</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="70">+70</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="80">+80</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="90">+90</button>
+          <button class="quick-add-btn bg-emerald-100 text-emerald-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-emerald-200 active:bg-emerald-300 transition-colors" data-point="100">+100</button>
+        </div>
       </div>
       
       <!-- ポイント使用 (オレンジ系) -->
-      <div class="flex flex-col sm:flex-row gap-2">
-        <input 
-          type="number" 
-          id="usePointInput" 
-          class="flex-1 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none text-lg text-center sm:text-left" 
-          placeholder="使用数 (例: 50)" 
-          min="1" 
-        >
-        <button 
-          id="usePointBtn" 
-          class="bg-amber-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-600 active:bg-amber-700 transition-colors whitespace-nowrap"
-        >
-          ➖ 使用する
-        </button>
+      <div class="pt-4 border-t border-slate-100">
+        <h3 class="text-sm font-bold text-slate-700 mb-2">➖ ポイントを使用する</h3>
+        <!-- 任意のポイント数を入力 -->
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input 
+            type="number" 
+            id="usePointInput" 
+            class="flex-1 p-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-amber-500 outline-none text-lg text-center sm:text-left" 
+            placeholder="任意の数を入力 (例: 15)" 
+            min="1" 
+          >
+          <button 
+            id="usePointBtn" 
+            class="bg-amber-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-amber-600 active:bg-amber-700 transition-colors whitespace-nowrap"
+          >
+            使用する
+          </button>
+        </div>
+
+        <!-- ワンクリック使用ボタン -->
+        <div class="grid grid-cols-5 gap-2 mt-3">
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="10">-10</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="20">-20</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="30">-30</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="40">-40</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="50">-50</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="60">-60</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="70">-70</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="80">-80</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="90">-90</button>
+          <button class="quick-use-btn bg-amber-100 text-amber-700 font-bold py-2 text-sm sm:text-base rounded shadow-sm hover:bg-amber-200 active:bg-amber-300 transition-colors" data-point="100">-100</button>
+        </div>
       </div>
     </div>
   </div>
@@ -139,6 +178,7 @@
     // ------------------------------------------
     // 【要件4】Firebaseの設定情報 (プレースホルダー)
     // ※実稼働させる際は、ご自身のFirebaseプロジェクトの設定値に書き換えてください。
+    // ※出席簿アプリと同じ設定値を入力してください。
     // ------------------------------------------
     const firebaseConfig = {
       apiKey: "AIzaSyBxriSl6JvV5CfJGEfDUTNXBs9RQJmI28U",
@@ -160,6 +200,7 @@
     // --- アプリケーションの状態 ---
     let currentUserId = null; // 現在読み込まれている会員のID
     let currentBalance = 0;   // 現在のポイント残高
+    let currentUserName = ''; // 現在の会員の名前 (出席簿と連動)
 
     // --- DOM要素の取得 ---
     const messageArea = document.getElementById('messageArea');
@@ -174,6 +215,7 @@
     // 情報・操作エリア
     const memberInfo = document.getElementById('memberInfo');
     const displayUserId = document.getElementById('displayUserId');
+    const displayUserName = document.getElementById('displayUserName');
     const displayPointBalance = document.getElementById('displayPointBalance');
     const operationSection = document.getElementById('operationSection');
     const addPointInput = document.getElementById('addPointInput');
@@ -207,6 +249,7 @@
     function updateUI() {
       if (currentUserId) {
         displayUserId.textContent = currentUserId;
+        displayUserName.textContent = currentUserName || '未登録 (出席簿で登録)';
         displayPointBalance.textContent = currentBalance;
         memberInfo.classList.remove('hidden');
         
@@ -219,7 +262,7 @@
     // データベース処理 (読み込み / 新規登録)
     // ==========================================
     
-    // 【要件8】会員データを取得し、未登録なら自動登録する処理
+    // 会員データを取得し、未登録なら自動登録する処理
     async function processUser(uid) {
       if (!isConfigured) {
         showMessage('Firebaseが設定されていません。コード内の firebaseConfig を編集してください。', 'error');
@@ -230,18 +273,21 @@
       showMessage(`ID: ${uid} を検索中...`);
       
       try {
-        const userRef = doc(db, 'users', uid);
+        // 保存先を出席簿アプリと同じ 'students' に変更
+        const userRef = doc(db, 'students', uid);
         const userSnap = await getDoc(userRef);
 
         if (userSnap.exists()) {
           // 既存会員
           currentBalance = userSnap.data().pointBalance || 0;
+          currentUserName = userSnap.data().name || '';
           showMessage('会員データを読み込みました。');
         } else {
-          // 新規会員: setDoc の mergeオプションを使用してデータを作成
-          await setDoc(userRef, { pointBalance: 0 }, { merge: true });
+          // 新規会員: 出席簿側で登録する運用を推奨しますが、QR側でも仮枠を作ります
+          await setDoc(userRef, { pointBalance: 0, sortIndex: 999 }, { merge: true });
           currentBalance = 0;
-          showMessage('新規会員として登録しました。');
+          currentUserName = '仮登録';
+          showMessage('新規会員として仮登録しました。出席簿でも登録してください。');
         }
         
         currentUserId = uid;
@@ -249,7 +295,6 @@
         
         // 操作しやすくするため入力欄をクリア
         userIdInput.value = '';
-        addPointInput.focus();
 
       } catch (error) {
         console.error("データ取得エラー:", error);
@@ -261,7 +306,7 @@
     // 入力トリガー (カメラ / 外部リーダー / 手入力)
     // ==========================================
 
-    // 【要件5】スマートフォンのカメラでQRコードを読み取る機能
+    // スマートフォンのカメラでQRコードを読み取る機能
     startCameraBtn.addEventListener('click', async () => {
       // スキャナ領域を表示
       readerDiv.classList.remove('hidden');
@@ -312,7 +357,7 @@
       }
     }
 
-    // 【要件6】手動入力・外部カードリーダー対応 (Enterキー検知)
+    // 手動入力・外部カードリーダー対応 (Enterキー検知)
     userIdInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
@@ -324,23 +369,23 @@
     });
 
     // ==========================================
-    // ポイント操作処理 (付与 / 使用)
+    // ポイント操作ロジック (関数化)
     // ==========================================
 
-    // 【要件9】ポイントを付与する処理 (incrementを使用)
-    addPointBtn.addEventListener('click', async () => {
+    // ポイントを付与するコア処理
+    async function executeAddPoint(points) {
       if (!currentUserId) return;
       
-      const points = parseInt(addPointInput.value, 10);
       if (isNaN(points) || points <= 0) {
         showMessage('正しいポイント数を入力してください。', 'error');
         return;
       }
 
       try {
-        const userRef = doc(db, 'users', currentUserId);
+        // 保存先を出席簿アプリと同じ 'students' に変更
+        const userRef = doc(db, 'students', currentUserId);
         
-        // incrementを使ってアトミックに加算（複数端末からの同時更新でデータが壊れないようにする）
+        // incrementを使ってアトミックに加算
         await updateDoc(userRef, {
           pointBalance: increment(points)
         });
@@ -355,26 +400,26 @@
         console.error("ポイント付与エラー:", error);
         showMessage('ポイントの付与に失敗しました。', 'error');
       }
-    });
+    }
 
-    // 【要件7】ポイントを使用する処理 (バリデーションとincrementを使用)
-    usePointBtn.addEventListener('click', async () => {
+    // ポイントを使用するコア処理
+    async function executeUsePoint(points) {
       if (!currentUserId) return;
       
-      const points = parseInt(usePointInput.value, 10);
       if (isNaN(points) || points <= 0) {
         showMessage('正しいポイント数を入力してください。', 'error');
         return;
       }
 
-      // ★ バリデーション: 使用ポイントが残高を上回っていないかチェック
+      // バリデーション: 使用ポイントが残高を上回っていないかチェック
       if (points > currentBalance) {
         showMessage(`残高が不足しています。（現在の残高: ${currentBalance}pt）`, 'error');
         return;
       }
 
       try {
-        const userRef = doc(db, 'users', currentUserId);
+        // 保存先を出席簿アプリと同じ 'students' に変更
+        const userRef = doc(db, 'students', currentUserId);
         
         // incrementを使ってアトミックに減算 (マイナス値を渡す)
         await updateDoc(userRef, {
@@ -391,6 +436,38 @@
         console.error("ポイント使用エラー:", error);
         showMessage('ポイントの使用に失敗しました。', 'error');
       }
+    }
+
+    // ==========================================
+    // イベントリスナーの登録 (ボタン操作)
+    // ==========================================
+
+    // 手動入力ボタン (付与)
+    addPointBtn.addEventListener('click', () => {
+      const points = parseInt(addPointInput.value, 10);
+      executeAddPoint(points);
+    });
+
+    // 手動入力ボタン (使用)
+    usePointBtn.addEventListener('click', () => {
+      const points = parseInt(usePointInput.value, 10);
+      executeUsePoint(points);
+    });
+
+    // ワンクリック付与ボタン (10〜100)
+    document.querySelectorAll('.quick-add-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const points = parseInt(e.target.dataset.point, 10);
+        executeAddPoint(points);
+      });
+    });
+
+    // ワンクリック使用ボタン (10〜100)
+    document.querySelectorAll('.quick-use-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const points = parseInt(e.target.dataset.point, 10);
+        executeUsePoint(points);
+      });
     });
 
   </script>
