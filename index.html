@@ -95,6 +95,17 @@
          ========================================== -->
     <div id="operationSection" class="opacity-50 pointer-events-none transition-opacity duration-300 space-y-6 pt-4 border-t border-slate-200">
       
+      <!-- 【追加・改善】出席記録 (青系) -->
+      <div>
+        <h3 class="text-sm font-bold text-slate-700 mb-2">📅 出席管理</h3>
+        <button 
+          id="markAttendanceBtn" 
+          class="w-full bg-blue-500 text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-blue-600 active:bg-blue-700 transition-colors"
+        >
+          出席を記録する
+        </button>
+      </div>
+
       <!-- ポイント付与 (緑系) -->
       <div>
         <h3 class="text-sm font-bold text-slate-700 mb-2">➕ ポイントを付与する</h3>
@@ -222,6 +233,9 @@
     const addPointBtn = document.getElementById('addPointBtn');
     const usePointInput = document.getElementById('usePointInput');
     const usePointBtn = document.getElementById('usePointBtn');
+    
+    // 【追加】出席ボタンの要素取得
+    const markAttendanceBtn = document.getElementById('markAttendanceBtn');
 
     // ==========================================
     // UIユーティリティ
@@ -369,8 +383,61 @@
     });
 
     // ==========================================
-    // ポイント操作ロジック (関数化)
+    // ポイント・出席操作ロジック (関数化)
     // ==========================================
+
+    // 【改善】本日の出席を記録する処理
+    async function executeMarkAttendance() {
+      if (!currentUserId) return;
+
+      const today = new Date();
+      // 出席簿アプリの日付キー生成ロジックに合わせるため、時間を12:00に設定して日付文字列を取得
+      today.setHours(12, 0, 0, 0);
+      const dateKey = today.toISOString().split('T')[0];
+      
+      // 3倍月間判定用のキー (例: "2026-3") ※getMonth()は0始まりなので+1
+      const monthKey = `${today.getFullYear()}-${today.getMonth() + 1}`;
+
+      try {
+        // 1. 既に出席済みか確認する (二重ポイント付与防止)
+        const attendanceRef = doc(db, 'cs_settings', 'attendance');
+        const key = `${currentUserId}_${dateKey}`;
+        const attendanceSnap = await getDoc(attendanceRef);
+        
+        if (attendanceSnap.exists() && attendanceSnap.data()[key] === 'present') {
+          showMessage('本日はすでに出席済みです（ポイントも付与済み）。');
+          return;
+        }
+
+        // 2. 3倍月間かどうかを確認して付与ポイントを決定
+        const bonusRef = doc(db, 'cs_settings', 'bonusMonths');
+        const bonusSnap = await getDoc(bonusRef);
+        let pointsToAdd = 10; // 通常は+10pt
+        if (bonusSnap.exists() && bonusSnap.data()[monthKey]) {
+          pointsToAdd = 30; // 3倍月間なら+30pt
+        }
+
+        // 3. 出席 ('present') を記録
+        await setDoc(attendanceRef, {
+          [key]: 'present'
+        }, { merge: true });
+        
+        // 4. 生徒のポイントを加算
+        const userRef = doc(db, 'students', currentUserId);
+        await updateDoc(userRef, {
+          pointBalance: increment(pointsToAdd)
+        });
+
+        // 5. 画面のポイント残高を更新
+        currentBalance += pointsToAdd;
+        updateUI();
+        
+        showMessage(`出席を記録し、${pointsToAdd}ptを付与しました！`);
+      } catch (error) {
+        console.error("出席記録エラー:", error);
+        showMessage('出席の記録に失敗しました。', 'error');
+      }
+    }
 
     // ポイントを付与するコア処理
     async function executeAddPoint(points) {
@@ -441,6 +508,11 @@
     // ==========================================
     // イベントリスナーの登録 (ボタン操作)
     // ==========================================
+
+    // 【追加】出席記録ボタン
+    markAttendanceBtn.addEventListener('click', () => {
+      executeMarkAttendance();
+    });
 
     // 手動入力ボタン (付与)
     addPointBtn.addEventListener('click', () => {
